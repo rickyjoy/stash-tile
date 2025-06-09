@@ -1,0 +1,43 @@
+tiles:
+  - name: stash-tile
+    interval: 600
+    title: 'Starting...'
+    content: 'stash'
+    icon: 'theatermasks.circle.fill' # 或 https://stash.ws/amazing.png
+    backgroundColor: '#663399'
+ 
+
+
+script:
+  - name: stash-tile # 脚本的唯一名称
+    # 脚本内容
+    content: |
+      const url = "http://ip-api.com/json/?lang=zh-CN";
+
+      $httpClient.get(url, function(error, response, data){
+        if (error) {
+          // 如果请求失败，显示错误信息
+          const tile = {
+            title: 'IP查询失败',
+            content: '请检查网络连接或节点状态',
+            icon: 'wifi.slash',
+            backgroundColor: '#FF3B30' // 红色
+          };
+          $done(tile);
+          return;
+        }
+
+        // 解析返回的 JSON 数据
+        const info = JSON.parse(data);
+
+        // 准备磁贴内容
+        const tile = {
+          title: `IP: ${info.query}`, // 磁贴标题显示IP地址
+          content: `地区: ${info.country} - ${info.city}\n运营商: ${info.isp}`, // 磁贴内容显示国家、城市和运营商
+          icon: 'location.fill', // 使用定位图标
+          backgroundColor: '#34C759' // 绿色，表示成功
+        };
+
+        // 完成并更新磁贴
+        $done(tile);
+      });
